@@ -4,8 +4,7 @@ const Contacts = require("../../model");
 
 router.get("/", async (req, res, next) => {
   try {
-    const contacts = await Contacts.listContacts;
-    console.log(contacts);
+    const contacts = await Contacts.listContacts();
     return res.json({ status: "success", code: "200", data: { contacts } });
   } catch (error) {
     next(error);
@@ -13,7 +12,15 @@ router.get("/", async (req, res, next) => {
 });
 
 router.get("/:contactId", async (req, res, next) => {
-  res.json({ message: "template message" });
+  try {
+    const contact = await Contacts.getContactById(req.params.contactId);
+    if (contact) {
+      return res.json({ status: "success", code: "200", data: { contact } });
+    }
+    return res.json({ status: "error", code: "404", message: "Not found" });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post("/", async (req, res, next) => {

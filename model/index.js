@@ -12,7 +12,11 @@ const listContacts = async () => {
   return await readData();
 };
 
-const getContactById = async (contactId) => {};
+const getContactById = async (contactId) => {
+  const data = await readData();
+  const result = data.find(({ id }) => String(id) === contactId);
+  return result;
+};
 
 const removeContact = async (contactId) => {};
 
