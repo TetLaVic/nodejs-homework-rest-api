@@ -18,7 +18,19 @@ const getContactById = async (contactId) => {
   return result;
 };
 
-const removeContact = async (contactId) => {};
+const removeContact = async (contactId) => {
+  const data = await readData();
+  const idx = data.findIndex(({ id }) => String(id) === contactId);
+  if (idx !== -1) {
+    data.splice(idx, 1);
+    await fs.writeFile(
+      path.join(__dirname, "contacts.json"),
+      JSON.stringify(data)
+    );
+    return true;
+  }
+  return false;
+};
 
 const addContact = async (body) => {
   const id = uuid();
@@ -37,7 +49,19 @@ const addContact = async (body) => {
   return record;
 };
 
-const updateContact = async (contactId, body) => {};
+const updateContact = async (contactId, body) => {
+  const data = await readData();
+  const [result] = data.filter(({ id }) => String(id) === contactId);
+  if (result) {
+    Object.assign(result, body);
+    await fs.writeFile(
+      path.join(__dirname, "contacts.json"),
+      JSON.stringify(data)
+    );
+  }
+
+  return result;
+};
 
 module.exports = {
   listContacts,

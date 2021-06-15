@@ -26,6 +26,7 @@ router.get("/:contactId", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     const contact = await Contacts.addContact(req.body);
+    console.log("contact", contact);
     return res
       .status(201)
       .json({ status: "success", code: "201", data: { contact } });
@@ -35,11 +36,30 @@ router.post("/", async (req, res, next) => {
 });
 
 router.delete("/:contactId", async (req, res, next) => {
-  res.json({ message: "template message" });
+  try {
+    const contact = await Contacts.removeContact(req.params.contactId);
+    if (contact) {
+      return res.json({ status: "success", code: "200", data: { contact } });
+    }
+    return res.json({ status: "error", code: "404", message: "Not found" });
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.patch("/:contactId", async (req, res, next) => {
-  res.json({ message: "template message" });
+router.put("/:contactId", async (req, res, next) => {
+  try {
+    const contact = await Contacts.updateContact(
+      req.params.contactId,
+      req.body
+    );
+    if (contact) {
+      return res.json({ status: "success", code: "200", data: { contact } });
+    }
+    return res.json({ status: "error", code: "404", message: "Not found" });
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;
