@@ -22,14 +22,14 @@ const removeContact = async (contactId) => {
   const data = await readData();
   const idx = data.findIndex(({ id }) => String(id) === contactId);
   if (idx !== -1) {
-    data.splice(idx, 1);
+    const result = data.splice(idx, 1);
     await fs.writeFile(
       path.join(__dirname, "contacts.json"),
       JSON.stringify(data)
     );
-    return true;
+    return result;
   }
-  return false;
+  return null;
 };
 
 const addContact = async (body) => {
