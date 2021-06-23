@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Contacts = require("../../model");
+const Contacts = require("../../model/contacts");
 const {
   createContactValidation,
   updateContactValidation,
@@ -80,7 +80,12 @@ router.put("/:contactId", updateContactValidation, async (req, res, next) => {
       req.params.contactId,
       req.body
     );
-    if (contact?.name && contact?.email && contact?.phone) {
+    if (
+      contact?.name &&
+      contact?.email &&
+      contact?.phone &&
+      contact?.favorite
+    ) {
       return res.json({ status: "success", code: "200", data: { contact } });
     }
     return res.json({
@@ -109,7 +114,12 @@ router.patch(
         req.params.contactId,
         req.body
       );
-      if (contact?.name && contact?.email && contact?.phone) {
+      if (
+        contact?.name &&
+        contact?.email &&
+        contact?.phone &&
+        contact?.favorite
+      ) {
         return res.json({ status: "success", code: "200", data: { contact } });
       }
       return res.json({
