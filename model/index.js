@@ -36,7 +36,7 @@ const addContact = async (body) => {
   const record = {
     id,
     ...body,
-    ...(body.address ? {} : { address: false }),
+    ...(body.favorite ? {} : { favorite: false }),
   };
 
   const data = await readData();
