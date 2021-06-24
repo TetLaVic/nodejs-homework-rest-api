@@ -31,11 +31,12 @@ router.get("/:contactId", async (req, res, next) => {
 router.post("/", createContactValidation, async (req, res, next) => {
   try {
     const contact = await Contacts.addContact(req.body);
+    console.log("contact", contact);
     if (
       contact?.name &&
       contact?.email &&
       contact?.phone &&
-      contact?.favorite
+      contact?.favorite !== null
     ) {
       return res
         .status(201)
@@ -84,7 +85,7 @@ router.put("/:contactId", updateContactValidation, async (req, res, next) => {
       contact?.name &&
       contact?.email &&
       contact?.phone &&
-      contact?.favorite
+      contact?.favorite !== null
     ) {
       return res.json({ status: "success", code: "200", data: { contact } });
     }
@@ -114,19 +115,7 @@ router.patch(
         req.params.contactId,
         req.body
       );
-      if (
-        contact?.name &&
-        contact?.email &&
-        contact?.phone &&
-        contact?.favorite
-      ) {
-        return res.json({ status: "success", code: "200", data: { contact } });
-      }
-      return res.json({
-        status: "error",
-        code: "404",
-        message: "Not found",
-      });
+      return res.json({ status: "success", code: "200", data: { contact } });
     } catch (error) {
       next(error);
     }
