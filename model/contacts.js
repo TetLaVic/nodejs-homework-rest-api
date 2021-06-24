@@ -27,23 +27,13 @@ const getContactById = async (contactId) => {
 const removeContact = async (contactId) => {
   const collection = await getCollection(db, "contacts");
   const objId = new ObjectId(contactId);
-  const data = await readData();
-  const idx = data.findIndex(({ id }) => String(id) === contactId);
-  if (idx !== -1) {
-    const result = data.splice(idx, 1);
-    await fs.writeFile(
-      path.join(__dirname, "contacts.json"),
-      JSON.stringify(data)
-    );
-    return result;
-  }
-  return null;
+  const { value: result } = await collection.findOneAndDelete({ _id: objId });
+  return result;
 };
 
 const addContact = async (body) => {
   const collection = await getCollection(db, "contacts");
   const record = {
-    id,
     ...body,
     ...(body.favorite ? {} : { favorite: false }),
   };
@@ -56,15 +46,11 @@ const addContact = async (body) => {
 const updateContact = async (contactId, body) => {
   const collection = await getCollection(db, "contacts");
   const objId = new ObjectId(contactId);
-  const [result] = data.filter(({ id }) => String(id) === contactId);
-  if (result) {
-    Object.assign(result, body);
-    await fs.writeFile(
-      path.join(__dirname, "contacts.json"),
-      JSON.stringify(data)
-    );
-  }
-
+  const { value: result } = await collection.findOneAndUpdate(
+    { _id: objId },
+    { $set: body },
+    { returnOriginal: false }
+  );
   return result;
 };
 
