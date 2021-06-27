@@ -4,6 +4,28 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const SECRET_KEY = process.env.SECRET_KEY;
 
+const getCurrent = async (req, res, next) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(HttpCode.UNAUTHORIZED).json({
+        status: "error",
+        code: HttpCode.UNAUTHORIZED,
+        message: "Not authorized",
+      });
+    }
+
+    const { email, subscription } = user;
+    return res.json({
+      status: "success",
+      code: HttpCode.OK,
+      user: { email, subscription },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const signup = async (req, res, next) => {
   try {
     const user = await Users.findByEmail(req.body.email);
@@ -36,7 +58,6 @@ const login = async (req, res, next) => {
         message: "Invalid credentials",
       });
     }
-
     const id = user.id;
     const payload = { id };
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "2h" });
@@ -60,4 +81,26 @@ const logout = async (req, res, next) => {
     next(error);
   }
 };
-module.exports = { signup, login, logout };
+
+const updateSubscription = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    if (!req.body) {
+      return res.json({
+        status: "error",
+        code: HttpCode.BAD_REQUEST,
+        message: "Missing field 'subscription'",
+      });
+    }
+    console.log(userId);
+    const { subscription } = await Users.update(userId, req.body);
+    return res.json({
+      status: "success",
+      code: HttpCode.OK,
+      user: { subscription },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports = { signup, login, logout, updateSubscription, getCurrent };

@@ -9,15 +9,28 @@ const listContacts = async (userId, query) => {
     sortBy,
     sortByDesc,
     filter,
-    favorite = false,
+    favorite = null,
     limit = 5,
     offset,
   } = query;
   const optionsSearch = { owner: userId };
-  if (favorite) {
-    optionSearch.favorite = favorite;
+  if (favorite !== null) {
+    optionsSearch.favorite = favorite;
   }
-  const results = Contact.paginate(optionsSearch, { limit, offset });
+  const results = Contact.paginate(optionsSearch, {
+    limit,
+    offset,
+    filter,
+    sort: {
+      ...(sortBy ? { [`${sortBy}`]: 1 } : {}),
+      ...(sortByDesc ? { [`${sortByDesc}`]: -1 } : {}),
+    },
+    select: filter ? filter.split("|").join(" ") : "",
+    populate: {
+      path: "owner",
+      select: "email subscription",
+    },
+  });
   return results;
 };
 

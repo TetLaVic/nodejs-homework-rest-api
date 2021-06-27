@@ -3,14 +3,23 @@ const router = express.Router();
 const ctrl = require("../../../controllers/users");
 const guard = require("../../../helpers/guard");
 
-// const {
-//   createContactValidation,
-//   updateContactValidation,
-//   updateContactFavoriteValidation,
-// } = require("./validation");
+const {
+  signupUserValidation,
+  updateUserSubscriptionValidation,
+  loginUserValidation,
+} = require("./validation");
 
-router.post("/signup", ctrl.signup);
-router.post("/login", ctrl.login);
+router.get("/current", guard, ctrl.getCurrent);
+
+router.post("/signup", signupUserValidation, ctrl.signup);
+router.post("/login", loginUserValidation, ctrl.login);
 router.post("/logout", guard, ctrl.logout);
+
+router.patch(
+  "/subscription",
+  guard,
+  updateUserSubscriptionValidation,
+  ctrl.updateSubscription
+);
 
 module.exports = router;

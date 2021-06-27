@@ -17,4 +17,14 @@ const updateToken = async (id, token) => {
   return await User.updateOne({ _id: id }, { token });
 };
 
-module.exports = { findById, findByEmail, create, updateToken };
+const update = async (id, body) => {
+  const result = await User.findOneAndUpdate(
+    { _id: id },
+    { ...body },
+    { new: true }
+  );
+  console.log("+++++++++++++++++++++++++++", result, id, body);
+  return result;
+};
+
+module.exports = { findById, findByEmail, create, updateToken, update };
