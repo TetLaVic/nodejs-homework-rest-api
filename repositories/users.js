@@ -23,7 +23,6 @@ const update = async (id, body) => {
     { ...body },
     { new: true }
   );
-  console.log("+++++++++++++++++++++++++++", result, id, body);
   return result;
 };
 
