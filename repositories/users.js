@@ -13,6 +13,13 @@ const create = async (body) => {
   return await user.save();
 };
 
+const tryVerify = async (verifyToken) => {
+  return await User.findOneAndUpdate(
+    { verifyToken },
+    { isVerified: true, verifyToken: null }
+  );
+};
+
 const updateToken = async (id, token) => {
   return await User.updateOne({ _id: id }, { token });
 };
@@ -34,6 +41,7 @@ module.exports = {
   findById,
   findByEmail,
   create,
+  tryVerify,
   updateToken,
   update,
   updateAvatar,
